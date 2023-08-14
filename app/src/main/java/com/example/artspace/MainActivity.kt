@@ -1,36 +1,34 @@
 package com.example.artspace
 
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.artspace.ui.theme.ArtSpaceTheme
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
@@ -39,11 +37,20 @@ class MainActivity : ComponentActivity() {
         setContent {
             ArtSpaceTheme {
                 // A surface container using the 'background' color from the theme
+//                var currentImage by remember { mutableStateOf(1) }
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    Column {
+                        Artwork(artwork = imageResource, desc = stringResource(id = imageName))
+                        ArtworkTitle(title = stringResource(imageName))
+                        ArtworkArtist(
+                            name = stringResource(id = imageArtist),
+                            year = stringResource(id = imageYear)
+                        )
+                        ButtonGroup(name = "")
+                    }
                 }
             }
         }
@@ -51,11 +58,26 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun ArtApp() {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(50.dp),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column (
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ){
+            Artwork(artwork = imageResource, desc = stringResource(id = imageName))
+            ArtworkDetail(
+                artName = stringResource(imageName),
+                artistName = stringResource(id = imageArtist),
+                artYear = stringResource(id = imageYear)
+            )
+            ButtonGroup(name = "")
+        }
+    }
 }
 
 @Composable
@@ -66,11 +88,13 @@ fun Artwork(artwork: Int, desc: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ArtworkDetail(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "",
-        modifier = modifier
-    )
+fun ArtworkDetail(artName: String, artistName: String, artYear: String, modifier: Modifier = Modifier) {
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        ArtworkTitle(title = artName)
+        ArtworkArtist(name = artistName, year = artYear)
+    }
 }
 
 @Composable
@@ -84,7 +108,7 @@ fun ArtworkTitle(title: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun ArtworkArtist(name: String, year: String, modifier: Modifier = Modifier) {
-    if (year != null) {
+    if (year == "") {
         Text(
             text = name,
             modifier = modifier
@@ -111,14 +135,16 @@ fun ButtonGroup(name: String, modifier: Modifier = Modifier) {
             .fillMaxWidth()
     ) {
         Button(
-            onClick = { /*TODO*/ },
-            modifier = modifier.width(120.dp)
+            onClick = {picNumber--},
+            modifier = modifier.width(120.dp),
+            enabled = picNumber != 1
         ) {
             Text(stringResource(id = R.string.previous))
         }
         Button(
-            onClick = { /*TODO*/ },
-            modifier = modifier.width(120.dp)
+            onClick = {picNumber++},
+            modifier = modifier.width(120.dp),
+            enabled = picNumber != 3
         ){
             Text(stringResource(id = R.string.next))
         }
@@ -127,9 +153,9 @@ fun ButtonGroup(name: String, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun ArtAppPreview() {
     ArtSpaceTheme {
-        Greeting("Android")
+        ArtApp()
     }
 }
 
@@ -143,12 +169,31 @@ fun ArtworkPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun ArtworkDetailPreview() {
+fun ArtworkTitlePreview() {
     ArtSpaceTheme {
-        Artwork(R.drawable.the_starry_night, "starry night")
+        Column (
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Artwork(artwork = imageResource, desc = stringResource(id = imageName))
+            ArtworkTitle(title = stringResource(imageName))
+            ArtworkArtist(
+                name = stringResource(id = imageArtist),
+                year = stringResource(id = imageYear)
+            )
+        }
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun ArtworkDetailPreview() {
+    ArtSpaceTheme {
+        ArtworkArtist(
+            name = stringResource(id = imageArtist),
+            year = stringResource(id = imageYear),
+            modifier = Modifier)
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
@@ -157,3 +202,30 @@ fun ButtonGroupPreview() {
         ButtonGroup("Android")
     }
 }
+
+var picNumber = 3
+
+val imageResource = when (picNumber) {
+    1 -> R.drawable.the_starry_night
+    2 -> R.drawable.mona_lisa
+    else -> R.drawable.to_ngoc_van_thieu_nu_ben_hoa_hue
+}
+
+val imageName = when (picNumber) {
+    1 -> R.string.pic1
+    2 -> R.string.pic2
+    else -> R.string.pic3
+}
+
+val imageArtist = when (picNumber) {
+    1 -> R.string.artist1
+    2 -> R.string.artist2
+    else -> R.string.artist3
+}
+
+val imageYear = when (picNumber) {
+    1 -> R.string.year1
+    2 -> R.string.year2
+    else -> R.string.year3
+}
+

@@ -2,4 +2,13 @@
     <string name="app_name">Art Space</string>
     <string name="previous">Previous</string>
     <string name="next">Next</string>
+    <string name="pic1">The Starry Night</string>
+    <string name="pic2">Mona Lisa</string>
+    <string name="pic3">Thiếu nữ bên hoa huệ</string>
+    <string name="artist1">Vincent Van Gogh</string>
+    <string name="artist2">Leonardo da Vinci</string>
+    <string name="artist3">Tô Ngọc Vân</string>
+    <string name="year1">1889</string>
+    <string name="year2"></string>
+    <string name="year3">1943</string>
 </resources>
